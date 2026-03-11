@@ -1,7 +1,4 @@
-global using Microsoft.AspNetCore.Mvc;
- 
-global using Microsoft.EntityFrameworkCore;
-using JCK.Data;
+
 
 [ApiController]
 [Route("api/[controller]")]
