@@ -9,12 +9,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
+builder.Services.AddControllers(); // <-- Required
+
 var app = builder.Build();
+
 
 // serve files from wwwroot folder
 app.UseDefaultFiles(); // serves index.html by default
 app.UseStaticFiles();
-
+app.UseRouting();
+app.UseAuthorization();
+app.MapControllers(); // <-- Required for [ApiController] routes
 // example api endpoint remove this
 app.MapGet("/api/test", () => "hello from server");
 
