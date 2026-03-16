@@ -19,4 +19,15 @@ public class ListingController : ControllerBase // inherits from controller base
         var products = await _context.Listings.ToListAsync();
         return Ok(products); // Returns JSON
     }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateListing(Listing listing)
+    {
+        _context.Listings.Add(listing);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetProducts), new { id = listing.Id }, listing);
+    }
+
+
 }
