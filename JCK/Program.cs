@@ -20,7 +20,6 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers(); // <-- Required for [ApiController] routes
-// example api endpoint remove this
-app.MapGet("/api/test", () => "hello from server");
+
 
 app.Run();

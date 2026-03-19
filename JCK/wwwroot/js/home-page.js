@@ -1,5 +1,6 @@
 const apiUrl = '/api/Listing'; 
 
+//fetch listing general 
 async function fetchListings() {
     try {
         const response = await fetch(apiUrl);
