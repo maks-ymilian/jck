@@ -34,6 +34,8 @@ const images = [
 // ^ todo all of the above variables should be pulled in from the database ^
 
 try {
+    document.title = car_name + " | JCK";
+
     const image_list_container = document.getElementById("image-list-container");
     const first_image_container = document.getElementById("first-image-container");
     const image_grid_container = document.getElementById("image-grid-container");
