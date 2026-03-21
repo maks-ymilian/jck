@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/style.css?v=1">
+    <link rel="stylesheet" href="/css/listing.css?v=1">
+</head>
+
+<body style="visibility: hidden">
+    <svg style="display: none">
+        <symbol id="star" viewBox="0 0 32 32">
+            <path fill-rule="evenodd" d="m15.1 1.58-4.13 8.88-9.86 1.27a1 1 0 0 0-.54 1.74l7.3 6.57-1.97 9.85a1 1 0 0 0 1.48 1.06l8.62-5 8.63 5a1 1 0 0 0 1.48-1.06l-1.97-9.85 7.3-6.57a1 1 0 0 0-.55-1.73l-9.86-1.28-4.12-8.88a1 1 0 0 0-1.82 0z"></path>
+        </symbol>
+    </svg>
+
+    <!-- Clerk plugin -->
+    <div id="user-button" style="position: fixed; top: 20px; right: 20px; z-index: 1000"></div>
+
+    <!-- Search Bar -->
+    <div class="searchBar">
+    <input type="text" id="searchBox" placeholder="Search Near you" />
+    </div>
+
+    <div id="image-layer">
+        <div id="image-list-container">
+        </div>
+    </div>
+
+    <div class="container">
+        <div style="position: relative; justify-content: flex-end; display: flex; flex: 1; height: 375px; gap: 6px; overflow: hidden; border-radius: 20px">
+            <div id="first-image-container" style="flex: 1"></div>
+            <div id="image-grid-container" class="image-block"></div>
+            <div id ="view-photos-button" style="pointer-events: none; box-shadow: 0 0 14px rgba(0, 0, 0, 0.14); border-radius: 999px; padding: 8px 15px; font-size: 17px; background-color: white; position: absolute; bottom: 25px; right: 20px">View photos</div>
+        </div>
+
+        <div style="height: 15px"></div>
+
+        <div class="header">
+            <h1 id="listing-title-text"></h1>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap">
+            <div style="flex: 1; min-width: 300px">
+                <div class="labeled-avatar" style="margin: 5px 0px 10px 0px">
+                    <img id="owner-profile-picture">
+                    <p id="owner-text"></p>
+                </div>
+                <p id="description-text" style="margin: 10px; font-size: 17px"></p>
+            </div>
+            <div style="width: 20px"></div>
+            <div class="card booking-card" style="margin-top: 20px; min-width: 300px; padding: 20px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center">
+                <p id="availability-text" style="font-size: 16px; margin: 0px"></p>
+                <div style="height: 15px"></div>
+                <div id="booking-ui" style="display: contents">
+                    <p id="price-text" style="margin: 0px; font-weight: 600; font-size: 25px"></p>
+                    <div style="height: 10px"></div>
+                    <div class="labeled-date-input">
+                        <p>from</p>
+                        <input id="from-date" type="date"/>
+                    </div>
+                    <div class="labeled-date-input">
+                        <p>to</p>
+                        <input id="to-date" type="date"/>
+                    </div>
+                    <p id="book-error-text" class="error" style="width: 0; min-width: 100%; display: block; margin: 0px; text-align: center"></p>
+                    <div style="height: 10px"></div>
+                    <button id="book-button">Book</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 50px"></div>
+
+        <div class="header">
+            <h1 id="reviews-title-text"></h1>
+            <div id="average-rating-parent" class="average-rating">
+                <svg class="star"><use href="#star"></use></svg>
+                <p id="average-rating-text">3.5</p>
+            </div>
+        </div>
+
+        <div id="review-input-box">
+            <div class="card" style="margin: 10px 0px; padding: 20px; display: flex; flex-direction: column">
+                <p style="margin: 0px; font-size: 17px; font-weight: 600">What did you think of this car?</p>
+                <div style="height: 15px"></div>
+                <div style="display: flex; align-items: center">
+                    <div id="star-selector" class="star-selector">
+                        <div><svg class="star missing-star"><use href="#star"></use></svg></div>
+                        <div><svg class="star missing-star"><use href="#star"></use></svg></div>
+                        <div><svg class="star missing-star"><use href="#star"></use></svg></div>
+                        <div><svg class="star missing-star"><use href="#star"></use></svg></div>
+                        <div><svg class="star missing-star"><use href="#star"></use></svg></div>
+                    </div>
+                    <p id="rating-error-text" class="error" style="margin: 0px; margin-left: 6px">* Select a star rating</p>
+                </div>
+                <div style="height: 7px"></div>
+                <textarea id="review-text-area" placeholder="Write your review" style="min-height: 120px"></textarea>
+                <div style="height: 10px"></div>
+                <div style="display: flex; flex-direction: row; justify-content: space-between">
+                    <p id="empty-review-error-text" class="error" style="margin: 0px; margin-top: -5px">* Review must not be empty</p>
+                    <button id="post-review-button" style="margin-left: auto">Post review</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="reviews-container" class="reviews"></div>
+    </div>
+
+    <script type="module" src="/js/auth-setup.js"></script>
+    <script type="module" src="/js/listing-page.js"></script>
+    <script type="module" src="/js/Search.js"></script>
+</body>
+</html>

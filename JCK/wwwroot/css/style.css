@@ -6,15 +6,17 @@ body {
     padding: 0;
 }
 
-.container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
+.card, .container {
     background: white;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 14px rgba(0,0,0,0.14);
 }
 
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+}
 
 .searchBar {
     display: flex !important;
@@ -51,6 +53,64 @@ li {
     border-bottom: 1px solid #ddd;
 }
 
+button {
+    height: fit-content;
+    appearance: none;
+    border: none;
+    background-color: #e15849;
+    font-size: 16px;
+    padding: 10px 22px;
+    border-radius: 99999px;
+    cursor: pointer;
+    color: white;
+    transition: 0.04s ease-out;
+    white-space: nowrap;
+}
 
+button:hover {
+    background-color: #ff6f52;
+}
 
+button:active {
+    transform: scale(0.97);
+}
 
+input[type="date"] {
+    height: fit-content;
+    appearance: none;
+    border: 2px solid #aaa;
+    color: #444444;
+    font-size: 18px;
+    padding: 10px 22px;
+    border-radius: 99999px;
+    cursor: pointer;
+    transition: 0.08s;
+    font: inherit;
+    white-space: nowrap;
+}
+
+textarea {
+    height: fit-content;
+    appearance: none;
+    border: 2px solid #aaa;
+    font-size: 20px;
+    padding: 10px;
+    cursor: pointer;
+    font: inherit;
+    border-radius: 10px;
+}
+
+.error {
+    display: none;
+    color: #bb0000;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+
+.shake {
+    animation: shake 0.2s;
+}
