@@ -68,23 +68,29 @@ try {
     price_text.innerHTML = `&euro;`;
     price_text.append(`${price_per_day} / day`);
 
-    if (available_start_date < new Date()) {
-        if (available_end_date > new Date()) {
-            if (available_end_date.getFullYear() === new Date().getFullYear()) // if the year in the date is this year
-                availability_text.textContent = `Available until ${available_end_date.toLocaleDateString(undefined, { month: "long", day: "numeric" })}`;
-            else
-                availability_text.textContent = `Available until ${available_end_date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}`;
-        }
-        else {
+    function format_date(date)
+    {
+        if (date.getFullYear() === new Date().getFullYear()) // if the year in the date is this year
+            return date.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+        else
+            return date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+    }
+
+    if (available_start_date < new Date())
+    {
+        if (available_end_date > new Date())
+            availability_text.textContent = `Available until ${format_date(available_end_date)}`;
+        else
+        {
             availability_text.textContent = "This car is not available.";
             booking_ui.style.display = "none";
         }
     }
-    else {
-        if (available_start_date.getFullYear() === new Date().getFullYear()) // if the year in the date is this year
-            availability_text.textContent = `Available from ${available_start_date.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`;
-        else
-            availability_text.textContent = `Available from ${available_start_date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}`;
+    else
+    {
+        availability_text.textContent = `Available from ${format_date(available_start_date)}`;
+        availability_text.insertAdjacentHTML("beforeend", "<br>");
+        availability_text.append(`to ${format_date(available_end_date)}`);
     }
 
     let selected_num_stars = -1; // -1 to indicate not selected yet
