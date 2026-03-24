@@ -8,6 +8,8 @@ public class Listing
     public decimal Price { get; set; }
     public int Year { get; set; }
 
+    public int Review{ get; set; }
+
     // Location
     public string Location { get; set; } = string.Empty;
 
@@ -19,5 +21,10 @@ public class Listing
 
     //Car Owner
     public string OwnerId { get; set; } = string.Empty;
+
+    //Customer
+    public string RenterId { get; set; }
+    
+
     
 }
