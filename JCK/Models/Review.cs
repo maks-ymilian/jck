@@ -13,6 +13,8 @@ public class Review
     [StringLength(2000)]
     public string Text { get; set; } = string.Empty;
 
+
+    [Column(TypeName = "timestamp")]
     public DateTime CreatedAt{ get; set; } = DateTime.UtcNow;
 
     [StringLength(200)]
