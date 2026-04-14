@@ -1,12 +1,13 @@
-const apiUrl = '/api/Listing'; 
-
-//fetch listing general 
-export async function fetchListings() {
+async function fetchListings(query) {
     try {
-        const response = await fetch(apiUrl);
+        let response;
+        if (query)
+            response = await fetch(`/api/listing/search?query=${encodeURIComponent(query)}`);
+        else
+            response = await fetch("/api/Listing");
+
         if (!response.ok) throw new Error(`${response.status}`);
         return await response.json();
-
     } catch (err) {
         console.error('Error fetching listings:', err);
     }
@@ -14,8 +15,10 @@ export async function fetchListings() {
 
 const listing_container = document.getElementById("listing-container");
 const title = document.getElementById("title");
+const listingList = document.getElementById("listingList");
 
-const listings = await fetchListings();
+const params = new URLSearchParams(window.location.search);
+const listings = await fetchListings(params.get("search"));
 listings.forEach(item => {
     listing_container.insertAdjacentHTML("beforeend", `
         <a href="${"/listing"}">
