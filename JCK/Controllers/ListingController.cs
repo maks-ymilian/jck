@@ -81,5 +81,31 @@ public class ListingController : ControllerBase // inherits from controller base
         return NoContent();
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetListing(int id)
+    {
+        var listing = await _context.Listings.FindAsync(id);
+
+        if (listing == null)
+            return NotFound();
+
+        return Ok(new
+        {
+            car_name = listing.CarName,
+            owner_name = listing.OwnerId, 
+            owner_image = "/images/user.jpg", 
+            description = $"A {listing.Year} {listing.CarName}", 
+
+            average_rating = listing.Review, 
+            eligible_for_review = true, 
+
+            price_per_day = listing.Price,
+
+            
+            available_start_date = DateTime.Now,
+            available_end_date = DateTime.Now.AddMonths(1)
+        });
+    }
+
 
 }
