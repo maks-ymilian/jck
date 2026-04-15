@@ -14,3 +14,4 @@ global using System.Linq;                              // LINQ operations
 global using System.Text.Json;                         // JsonSerializer if needed
 global using System.Text.Json.Serialization;           // JsonPropertyName etc.
 global using System.ComponentModel.DataAnnotations.Schema;
+global using JCK.DTO;

@@ -1,6 +1,7 @@
 
 using System.Formats.Asn1;
 
+
 [ApiController]
 [Route("api/[controller]")]
 public class ListingController : ControllerBase // inherits from controller base 
@@ -57,15 +58,27 @@ public class ListingController : ControllerBase // inherits from controller base
         return Ok(results);
     }  
 
+    //post for making a listing 
     [HttpPost]
-    public async Task<IActionResult> CreateListing(Listing listing)
+    public async Task<IActionResult> CreateListing(CreateListingDTO dto)
     {
-        _context.Listings.Add(listing);
-        await _context.SaveChangesAsync();
+    var listing = new Listing
+    {
+        CarName = dto.CarName,
+        Description = dto.Description,
+        Price = dto.Price,
+        Year = dto.Year,
+        CarLocation = dto.CarLocation,
+        StartDate = dto.StartDate,
+        EndDate = dto.EndDate,
+        IsAvailable = true
+    };
 
-        return CreatedAtAction(nameof(GetProducts), new { id = listing.Id }, listing);
+    _context.Listings.Add(listing);
+    await _context.SaveChangesAsync();
+
+    return Ok(listing);
     }
-
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteListing(int id)
@@ -92,11 +105,9 @@ public class ListingController : ControllerBase // inherits from controller base
         return Ok(new
         {
             car_name = listing.CarName,
-            owner_name = listing.OwnerId, 
             owner_image = "/images/user.jpg", 
             description = $"A {listing.Year} {listing.CarName}", 
 
-            average_rating = listing.Review, 
             eligible_for_review = true, 
 
             price_per_day = listing.Price,

@@ -18,7 +18,13 @@ const start_date_error_text = document.getElementById("start-date-error-text");
 const end_date_error_text = document.getElementById("end-date-error-text");   
 const images_input_error_text = document.getElementById("images-input-error-text");   
 
-get_location((location) => location_text.textContent = "Location: " + location);
+let userLocation = "";
+
+get_location((location) => {
+    userLocation = location;
+    location_text.textContent = "Location: " + location;
+});
+
 
 function get_title() {
     const value = name_input.value.trim();
@@ -121,6 +127,40 @@ create_button.addEventListener("click", () => {
     if (has_error)
         return;
 
-    alert(`todo make it post to db\ntitle: ${title.value}\nyear:${year.value}\ndescription: ${description.value}\nprice: ${price.value}\nstart date: ${dates.start}\nend date: ${dates.end}`);
+    const listing = {
+    carName: title.value,
+    description: description.value,
+    pricePerDay: parseFloat(price.value),
+    year: parseInt(year.value),
+    startDate: dates.start,
+    endDate: dates.end,
+    carLocation: userLocation
+};
+
+//post logic 
+fetch("http://localhost:5130/api/listing", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(listing)
+})
+.then(async (res) => {
+    if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || "Failed to create listing");
+    }
+    return res.json();
+})
+.then(data => {
+    console.log("Listing created:", data);
+    alert("Listing created successfully!");
+})
+.catch(err => {
+    console.error("FULL ERROR:", err);
+    alert(err.message);
+});
+
+
 })
 

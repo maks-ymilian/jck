@@ -10,4 +10,3 @@ searchBox.addEventListener("keyup", (event) => {
 
     window.location.href = `/?search=${searchBox.value.trim()}`;
 });
-
