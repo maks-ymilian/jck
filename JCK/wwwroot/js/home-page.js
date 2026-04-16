@@ -1,5 +1,5 @@
-import { get_location } from '/js/location.js'
-import { format_date_range } from '/js/common.js'
+import { get_location } from './location.js'
+import { format_date_range } from './common.js'
 
 async function fetchListings(query) {
     try {
@@ -29,7 +29,7 @@ listings.forEach(async item => {
     const image_url = images.length !== 0 ? images[0] : "";
 
     listing_container.insertAdjacentHTML("beforeend", `
-        <a href="/listing?id=${item.id}">
+        <a href="listing?id=${item.id}">
             <div class="card" style="padding: 16px; gap: 7px; display: flex; flex-direction: column">
                 <img src="${image_url}" style="width: 100%; aspect-ratio: 1 / 1; border-radius: 16px; object-fit: cover">
                 <p style="margin: 0px; font-size: 16px">${item.carName}</p>

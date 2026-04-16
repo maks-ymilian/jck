@@ -1,5 +1,5 @@
-import { get_location } from '/js/location.js'
-import { shake_element } from '/js/common.js'
+import { get_location } from './location.js'
+import { shake_element, BASE_URL } from './common.js'
 
 const location_text = document.getElementById("location-text");   
 const create_button = document.getElementById("create-button");   
@@ -166,12 +166,12 @@ create_button.addEventListener("click", async () => {
     })
     .then(data => {
         console.log("Listing created:", data);
-        window.location.href = "/";
+        window.location.href = BASE_URL + "/";
     })
     .catch(err => {
         console.error("FULL ERROR:", err);
         alert(err.message);
-        window.location.href = "/";
+        window.location.href = BASE_URL + "/";
     });
 })
 

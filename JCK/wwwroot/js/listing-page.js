@@ -1,4 +1,4 @@
-import { shake_element, format_date_range, format_date } from '/js/common.js'
+import { shake_element, format_date_range, format_date } from './common.js'
 
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
@@ -41,24 +41,14 @@ const available_start_date = new Date(listing.availableStartDate);
 const available_end_date = new Date(listing.availableEndDate);
 
 //const reviews = [
-    //{rating: 3, date: new Date(2025, 11, 10), name: "reviewer", profile_image:"/images/car4.webp", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-   // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "he scammed me"},
-   // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "amazing car"},
-   // {rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "llongwordlongwordlongwordlongwordlongwordlongwordlongwordongword"},
-   // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "he scammed me"},
-    //{rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-    //{rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "he scammed me"},
-   // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "i would never create an alt account to boost my rating"},
-//];
-
-//const images = [
-    //"/images/car4.webp",
-    //"/images/car5.jpg",
-    //"/images/car1.webp",
-   // "/images/car2.jpg",
-    //"/images/car3.webp",
-    //"/images/car7.webp",
-    //"/images/car6.jpg",
+    //{rating: 3, date: new Date(2025, 11, 10), name: "reviewer", profile_image:"../images/car4.webp", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
+   // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
+   // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "amazing car"},
+   // {rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "llongwordlongwordlongwordlongwordlongwordlongwordlongwordongword"},
+   // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
+    //{rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
+    //{rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
+   // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "i would never create an alt account to boost my rating"},
 //];
 
 // ^ Saving current data in case of a error
@@ -284,7 +274,7 @@ try {
                 rating: selected_num_stars + 1,
                 text: review_text_area.value.trim(),
                 reviewerName: "Anonymous",
-                reviewerProfileImage: "/images/user.jpg"
+                reviewerProfileImage: "../images/user.jpg"
             })
         })
         .then(response => {
