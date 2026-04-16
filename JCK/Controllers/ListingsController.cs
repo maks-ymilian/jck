@@ -104,17 +104,24 @@ public class ListingController : ControllerBase // inherits from controller base
 
         return Ok(new
         {
-            car_name = listing.CarName,
-            owner_image = "/images/user.jpg", 
-            description = $"A {listing.Year} {listing.CarName}", 
+            carName = listing.CarName,
+            ownerName = "Owner",
+            ownerImage = "/images/user.jpg",
+            description = listing.Description,
+            eligibleForReview = true,
+            pricePerDay = listing.Price,
+            availableStartDate = listing.StartDate,
+            availableEndDate = listing.EndDate,
 
-            eligible_for_review = true, 
+            images = new[]
+            {
+                "/images/car1.webp",
+                "/images/car2.jpg",
+                "/images/car3.webp"
+            },
 
-            price_per_day = listing.Price,
+           
 
-            
-            available_start_date = DateTime.Now,
-            available_end_date = DateTime.Now.AddMonths(1)
         });
     }
 

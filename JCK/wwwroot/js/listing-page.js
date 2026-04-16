@@ -1,39 +1,74 @@
 import { shake_element } from '/js/common.js'
 
-const car_name = "Car name";
-const owner_name = "name";
-const owner_image = "/images/user.jpg";
-const description = "LongLongLongLongLongLongLongLongLongLongLongLongLongLongLongLong                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
 
-const average_rating = 3.5;
-const eligible_for_review = true;
+let listing;
+let reviewData;
 
-const price_per_day = 100;
-const available_start_date = new Date(2025, 2, 1);
-const available_end_date = new Date(2026, 6, 5);
+try 
+{
+    const response = await fetch(`/api/Listing/${id}`);
+    if (!response.ok)
+    throw new Error("Listing not found");
 
-const reviews = [
-    {rating: 3, date: new Date(2025, 11, 10), name: "reviewer", profile_image:"/images/car4.webp", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-    {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "he scammed me"},
-    {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "amazing car"},
-    {rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "llongwordlongwordlongwordlongwordlongwordlongwordlongwordongword"},
-    {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "he scammed me"},
-    {rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-    {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "he scammed me"},
-    {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "i would never create an alt account to boost my rating"},
-];
+    listing = await response.json();
 
-const images = [
-    "/images/car4.webp",
-    "/images/car5.jpg",
-    "/images/car1.webp",
-    "/images/car2.jpg",
-    "/images/car3.webp",
-    "/images/car7.webp",
-    "/images/car6.jpg",
-];
 
-// ^ todo all of the above variables should be pulled in from the database ^
+
+    const reviewsResponse = await fetch(`/api/Reviews?listingId=${id}`);
+
+    if (!reviewsResponse.ok)
+    throw new Error("Could not load reviews");
+
+    reviewData = await reviewsResponse.json();
+} 
+catch (error) 
+{
+    console.error("Error fetching listing:", error);
+    alert("Error fetching listing data.");
+    document.body.style.visibility = "visible";
+    return;
+}
+
+
+const car_name = listing.carName;
+const owner_name = listing.ownerName;
+const owner_image = listing.ownerImage;
+const description = listing.description;
+
+const average_rating = reviewData.averageRating;
+const eligible_for_review = listing.eligibleForReview;
+
+const price_per_day = listing.pricePerDay;
+const available_start_date = new Date(listing.availableStartDate);
+const available_end_date = new Date(listing.availableEndDate);
+
+//const reviews = [
+    //{rating: 3, date: new Date(2025, 11, 10), name: "reviewer", profile_image:"/images/car4.webp", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
+   // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "he scammed me"},
+   // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "amazing car"},
+   // {rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "llongwordlongwordlongwordlongwordlongwordlongwordlongwordongword"},
+   // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "he scammed me"},
+    //{rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
+    //{rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "he scammed me"},
+   // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"/images/user.jpg", text: "i would never create an alt account to boost my rating"},
+//];
+
+//const images = [
+    //"/images/car4.webp",
+    //"/images/car5.jpg",
+    //"/images/car1.webp",
+   // "/images/car2.jpg",
+    //"/images/car3.webp",
+    //"/images/car7.webp",
+    //"/images/car6.jpg",
+//];
+
+// ^ Saving current data in case of a error
+
+const reviews = reviewData.reviews;
+const images = listing.images?? [];//Added to avoid crash if we have no image
 
 try {
     document.title = car_name + " | JCK";
@@ -80,9 +115,10 @@ try {
             return date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
     }
 
-    if (available_start_date < new Date())
+    const now = new Date();//Declaring date once over calling it multiple times to cause errors when the date changes while the user has the page open
+    if (available_start_date < now)
     {
-        if (available_end_date > new Date())
+        if (available_end_date > now)
             availability_text.textContent = `Available until ${format_date(available_end_date)}`;
         else
         {
@@ -183,7 +219,7 @@ try {
         }
     }
 
-    document.addEventListener("click", (e) => {
+    image_layer.addEventListener("click", () => {
         image_layer.classList.remove("visible");
         document.body.style.overflow = "";
     })
@@ -202,8 +238,8 @@ try {
         reviews_container.insertAdjacentHTML("beforeend", `
             <div class="card">
                 <div class="labeled-avatar">
-                    <img src="${escape_html(review.profile_image)}">
-                    <p>${escape_html(review.name)}</p>
+                    <img src="${escape_html(review.reviewerProfileImage)}">
+                    <p>${escape_html(review.reviewerName)}</p>
                 </div>
                 <div class="star-rating-date-combo">
                     <div class="star-rating">
@@ -213,7 +249,7 @@ try {
                         <svg class="star ${review.rating >= 4 ? "" : "missing-star"}"><use href="#star"></use></svg>
                         <svg class="star ${review.rating >= 5 ? "" : "missing-star"}"><use href="#star"></use></svg>
                     </div>
-                    <p>&middot; ${escape_html(review.date.toLocaleDateString(undefined, {year: "numeric", month: "long", day: "numeric"}))}</p>
+                    <p>&middot; ${escape_html(new Date(review.createdAt).toLocaleDateString(undefined, {year: "numeric", month: "long", day: "numeric"}))}</p>
                 </div>
                 <p>${escape_html(review.text)}</p>
             </div>
@@ -230,6 +266,12 @@ try {
         review_input_box.style.display = "block";
     else
         review_input_box.style.display = "none";
+
+    //function shake_element(element)
+    //{
+    //    element.classList.add("shake");
+    //    element.addEventListener("animationend", () => element.classList.remove("shake"), {once: true});
+    //} Removing to avoid errors because of duplicate function declaration. This is imported from common.js
 
     post_review_button.addEventListener("click", () => {
         let error = false;
@@ -252,13 +294,39 @@ try {
 
         if (!error)
         {
+            fetch("/api/Reviews", {
+            method: "POST",
+            headers: 
+            {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                listingId: Number(id),
+                rating: selected_num_stars + 1,
+                text: review_text_area.value.trim(),
+                reviewerName: "Anonymous",
+                reviewerProfileImage: "/images/user.jpg"
+            })
+        })
+        .then(response => {
+            if (!response.ok)
+                throw new Error("Failed to post review");
+
             review_text_area.value = "";
-            location.reload(); // refresh the page
-        }
+            location.reload();
+        })
+        .catch(error => {
+            alert("Could not post review.");
+            console.error(error);
+        });
+        //review_text_area.value = "";
+        //location.reload(); // refresh the page
+    }
     });
 
     function update_book_ui(user_action = true, is_final_click = false)
     {
+        const now = new Date();
         const error = (() => {
             if (is_final_click)
             {
@@ -281,7 +349,8 @@ try {
                 return true;
             }
 
-            if (new Date(from_date.value) < new Date())
+            
+            if (new Date(from_date.value) < now)
             {
                 book_error_text.textContent = "* Dates must be in the future";
                 return true;
@@ -327,7 +396,7 @@ try {
     book_button.addEventListener("click", () => {
         if (update_book_ui(true, true))
         {
-            alert("succesbs");
+            alert("Booking succesfully submitted!");
         }
     });
 
