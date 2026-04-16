@@ -1,29 +1,24 @@
-
-using System.Formats.Asn1;
-
+using System.Reflection.Metadata.Ecma335;
 
 [ApiController]
 [Route("api/[controller]")]
 public class ListingController : ControllerBase // inherits from controller base 
-
 {
-    
     private readonly AppDbContext _context;
 
-     public ListingController(AppDbContext context)
+    public ListingController(AppDbContext context)
     {
         _context = context;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetProducts() 
+    public async Task<IActionResult> GetAll() 
     {
-        var products = await _context.Listings.ToListAsync();
-        
-        if (products == null)
+        var listings = await _context.Listings.ToListAsync();
+        if (listings == null)
             return BadRequest();
         
-        return Ok(products); // Returns JSON
+        return Ok(listings);
     }
 
     [HttpGet("recommended")]
@@ -38,7 +33,6 @@ public class ListingController : ControllerBase // inherits from controller base
         return Ok(recommended);
     }
 
-
     //search api call
      // GET /api/Listing/search?query=apartment
     [HttpGet("search")]
@@ -50,8 +44,8 @@ public class ListingController : ControllerBase // inherits from controller base
 
         var results = await _context.Listings.Where(listing => listing.CarName.Contains(query.ToLower())).Select(listing => new
         {
-        id =  listing.Id,
-        carName = listing.CarName
+            id =  listing.Id,
+            carName = listing.CarName
         }
         ).ToListAsync();
 
@@ -62,31 +56,45 @@ public class ListingController : ControllerBase // inherits from controller base
     [HttpPost]
     public async Task<IActionResult> CreateListing(CreateListingDTO dto)
     {
-    var listing = new Listing
-    {
-        CarName = dto.CarName,
-        Description = dto.Description,
-        Price = dto.Price,
-        Year = dto.Year,
-        CarLocation = dto.CarLocation,
-        StartDate = dto.StartDate,
-        EndDate = dto.EndDate,
-        IsAvailable = true
-    };
+        var listing = new Listing
+        {
+            CarName = dto.CarName,
+            Description = dto.Description,
+            Price = dto.Price,
+            Year = dto.Year,
+            CarLocation = dto.CarLocation,
+            StartDate = dto.StartDate,
+            EndDate = dto.EndDate,
+            IsAvailable = true
+        };
+        _context.Listings.Add(listing);
+        await _context.SaveChangesAsync();
 
-    _context.Listings.Add(listing);
-    await _context.SaveChangesAsync();
+        int i = 0;
+        foreach (string url in dto.Images)
+        {
+            var image = new Image
+            {
+                ListingId = listing.Id,
+                URL = url,
+                Index = i,
+            };
+            _context.Images.Add(image);
+            await _context.SaveChangesAsync();
+            ++i;
+        }
 
-    return Ok(listing);
+        return Ok(listing);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteListing(int id)
     {
         var listing = await _context.Listings.FindAsync(id);
-
         if (listing == null)
             return NotFound();
+
+        _context.Images.RemoveRange(GetListingImages(listing.Id));
 
         _context.Listings.Remove(listing);
         await _context.SaveChangesAsync();
@@ -108,22 +116,26 @@ public class ListingController : ControllerBase // inherits from controller base
             ownerName = "Owner",
             ownerImage = "/images/user.jpg",
             description = listing.Description,
-            eligibleForReview = true,
             pricePerDay = listing.Price,
             availableStartDate = listing.StartDate,
             availableEndDate = listing.EndDate,
-
-            images = new[]
-            {
-                "/images/car1.webp",
-                "/images/car2.jpg",
-                "/images/car3.webp"
-            },
-
-           
-
+            images = GetListingImageURLs(listing.Id),
         });
     }
 
+    private List<Image> GetListingImages(int listing_id)
+    { 
+        return _context.Images.Where(image => image.ListingId == listing_id).OrderBy(image => image.Index).ToList();
+    }
 
+    private List<string> GetListingImageURLs(int listing_id)
+    {
+        var images = GetListingImages(listing_id);
+
+        var image_urls = new List<string>();
+        foreach (var image in images)
+            image_urls.Add(image.URL);
+
+        return image_urls;
+    }
 }

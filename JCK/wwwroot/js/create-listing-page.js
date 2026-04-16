@@ -114,7 +114,7 @@ function handle_error(value, error_text, on_error) {
     return value;
 }
 
-create_button.addEventListener("click", () => {
+create_button.addEventListener("click", async () => {
     let has_error = false;
 
     const title = handle_error(get_title(), title_error_text, () => has_error = true);
@@ -127,40 +127,51 @@ create_button.addEventListener("click", () => {
     if (has_error)
         return;
 
-    const listing = {
-    carName: title.value,
-    description: description.value,
-    pricePerDay: parseFloat(price.value),
-    year: parseInt(year.value),
-    startDate: dates.start,
-    endDate: dates.end,
-    carLocation: userLocation
-};
+    const form_data = new FormData();
+    for (const file of image_files.value)
+        form_data.append("files", file);
 
-//post logic 
-fetch("http://localhost:5130/api/listing", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify(listing)
-})
-.then(async (res) => {
-    if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(msg || "Failed to create listing");
+    const image_upload_request = await fetch("/api/images/upload", {method: "POST", body: form_data});
+    if (!image_upload_request.ok)
+    {
+        alert("failed to upload images");
+        throw new Error("Upload failed");
     }
-    return res.json();
-})
-.then(data => {
-    console.log("Listing created:", data);
-    alert("Listing created successfully!");
-})
-.catch(err => {
-    console.error("FULL ERROR:", err);
-    alert(err.message);
-});
 
+    const listing = {
+        carName: title.value,
+        description: description.value,
+        pricePerDay: parseFloat(price.value),
+        year: parseInt(year.value),
+        startDate: dates.start,
+        endDate: dates.end,
+        carLocation: userLocation,
+        images: (await image_upload_request.json()).urls,
+    };
 
+    //post logic 
+    fetch("http://localhost:5130/api/listing", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(listing)
+    })
+    .then(async (res) => {
+        if (!res.ok) {
+            const msg = await res.text();
+            throw new Error(msg || "Failed to create listing");
+        }
+        return res.json();
+    })
+    .then(data => {
+        console.log("Listing created:", data);
+        window.location.href = "/";
+    })
+    .catch(err => {
+        console.error("FULL ERROR:", err);
+        alert(err.message);
+        window.location.href = "/";
+    });
 })
 

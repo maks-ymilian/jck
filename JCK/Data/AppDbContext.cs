@@ -15,5 +15,6 @@ public class AppDbContext : DbContext
      * dotnet ef database update
     */ 
     public DbSet<Listing> Listings { get; set; }
+    public DbSet<Image> Images { get; set; }
     public DbSet<Review> Reviews { get; set; }
 }

@@ -14,8 +14,6 @@ try
 
     listing = await response.json();
 
-
-
     const reviewsResponse = await fetch(`/api/Reviews?listingId=${id}`);
 
     if (!reviewsResponse.ok)
@@ -28,9 +26,7 @@ catch (error)
     console.error("Error fetching listing:", error);
     alert("Error fetching listing data.");
     document.body.style.visibility = "visible";
-    return;
 }
-
 
 const car_name = listing.carName;
 const owner_name = listing.ownerName;
@@ -38,7 +34,7 @@ const owner_image = listing.ownerImage;
 const description = listing.description;
 
 const average_rating = reviewData.averageRating;
-const eligible_for_review = listing.eligibleForReview;
+const eligible_for_review = true; // todo this boolean is what shows the review posting box. it should be set here based on if the user booked this car before
 
 const price_per_day = listing.pricePerDay;
 const available_start_date = new Date(listing.availableStartDate);
@@ -68,7 +64,7 @@ const available_end_date = new Date(listing.availableEndDate);
 // ^ Saving current data in case of a error
 
 const reviews = reviewData.reviews;
-const images = listing.images?? [];//Added to avoid crash if we have no image
+const images = listing.images ?? []; //Added to avoid crash if we have no image
 
 try {
     document.title = car_name + " | JCK";
