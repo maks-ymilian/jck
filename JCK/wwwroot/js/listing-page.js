@@ -1,4 +1,4 @@
-import { shake_element } from '/js/common.js'
+import { shake_element, format_date_range, format_date } from '/js/common.js'
 
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
@@ -103,31 +103,14 @@ try {
     price_text.innerHTML = `&euro;`;
     price_text.append(`${price_per_day} / day`);
 
-    function format_date(date)
-    {
-        if (date.getFullYear() === new Date().getFullYear()) // if the year in the date is this year
-            return date.toLocaleDateString(undefined, { month: "long", day: "numeric" });
-        else
-            return date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
-    }
-
     const now = new Date();//Declaring date once over calling it multiple times to cause errors when the date changes while the user has the page open
-    if (available_start_date < now)
+    if (available_start_date < now && available_end_date < now)
     {
-        if (available_end_date > now)
-            availability_text.textContent = `Available until ${format_date(available_end_date)}`;
-        else
-        {
-            availability_text.textContent = "This car is not available.";
-            booking_ui.style.display = "none";
-        }
+        availability_text.textContent = "This car is not available.";
+        booking_ui.style.display = "none";
     }
     else
-    {
-        availability_text.textContent = `Available from ${format_date(available_start_date)}`;
-        availability_text.insertAdjacentHTML("beforeend", "<br>");
-        availability_text.append(`to ${format_date(available_end_date)}`);
-    }
+        availability_text.textContent = `Available ${format_date_range(available_start_date, available_end_date)}`;
 
     let selected_num_stars = -1; // -1 to indicate not selected yet
 

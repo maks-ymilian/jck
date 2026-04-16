@@ -1,4 +1,5 @@
 import { get_location } from '/js/location.js'
+import { format_date_range } from '/js/common.js'
 
 async function fetchListings(query) {
     try {
@@ -32,7 +33,7 @@ listings.forEach(async item => {
             <div class="card" style="padding: 16px; gap: 7px; display: flex; flex-direction: column">
                 <img src="${image_url}" style="width: 100%; aspect-ratio: 1 / 1; border-radius: 16px; object-fit: cover">
                 <p style="margin: 0px; font-size: 16px">${item.carName}</p>
-                <p style="margin: 0px; font-size: 14px; color: #676767">${"22 - 24 May"}<br/>&euro;${item.price} &middot; <svg style="height: 10px; width: 10px; fill: #676767"><use href="#star"></use></svg> ${item.review}</p>
+                <p style="margin: 0px; font-size: 14px; color: #676767">${format_date_range(item.startDate, item.endDate, true)}<br/>&euro;${item.price} &middot; <svg style="height: 10px; width: 10px; fill: #676767"><use href="#star"></use></svg> ${item.review}</p>
             </div>
         </a>
     `);
