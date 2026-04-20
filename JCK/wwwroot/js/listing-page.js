@@ -1,4 +1,5 @@
 import { shake_element, format_date_range, format_date } from './common.js'
+import { getUserId } from './auth.js'
 
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
@@ -362,11 +363,24 @@ try {
     from_date.addEventListener("change", update_book_ui);
     to_date.addEventListener("change", update_book_ui);
 
-    book_button.addEventListener("click", () => {
-        if (update_book_ui(true, true))
-        {
-            alert("Booking succesfully submitted!");
+    book_button.addEventListener("click", async () => {
+        if (!update_book_ui(true, true))
+            return;
+
+        const response = await fetch(`/api/listing/${id}/book`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: getUserId(), start_date: from_date.value, end_Date: to_date.value }),
+        })
+        if (response.status != 200) {
+            if (response.status == 400)
+                alert("Couldn't submit booking: " + await response.text())
+            else
+                alert("Something went wrong")
+            return;
         }
+
+        alert("Booking submitted!");
     });
 
     update_book_ui(false); // update on page refresh

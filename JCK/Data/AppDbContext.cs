@@ -17,4 +17,5 @@ public class AppDbContext : DbContext
     public DbSet<Listing> Listings { get; set; }
     public DbSet<Image> Images { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<Booking> Bookings { get; set; }
 }

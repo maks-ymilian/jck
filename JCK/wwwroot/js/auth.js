@@ -13,6 +13,10 @@ export function isSignedIn() {
     return clerk.isSignedIn;
 }
 
+export function getUserId() {
+    return clerk.user?.id;
+}
+
 export function mountUserButton(element) {
     clerk.mountUserButton(element);
 }

@@ -12,12 +12,12 @@ public class ListingController : ControllerBase // inherits from controller base
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll() 
+    public async Task<IActionResult> GetAll()
     {
         var listings = await _context.Listings.ToListAsync();
         if (listings == null)
             return BadRequest();
-        
+
         return Ok(listings);
     }
 
@@ -34,9 +34,9 @@ public class ListingController : ControllerBase // inherits from controller base
     }
 
     //search api call
-     // GET /api/Listing/search?query=apartment
+    // GET /api/Listing/search?query=apartment
     [HttpGet("search")]
-    public async Task<IActionResult>Search([FromQuery] string query)
+    public async Task<IActionResult> Search([FromQuery] string query)
     {
         // returns nothing 
         if (string.IsNullOrWhiteSpace(query))
@@ -44,13 +44,13 @@ public class ListingController : ControllerBase // inherits from controller base
 
         var results = await _context.Listings.Where(listing => listing.CarName.Contains(query.ToLower())).Select(listing => new
         {
-            id =  listing.Id,
+            id = listing.Id,
             carName = listing.CarName
         }
         ).ToListAsync();
 
         return Ok(results);
-    }  
+    }
 
     //post for making a listing 
     [HttpPost]
@@ -121,6 +121,38 @@ public class ListingController : ControllerBase // inherits from controller base
             availableEndDate = listing.EndDate,
             images = GetListingImageURLs(listing.Id),
         });
+    }
+
+    public class BookingRequest
+    {
+        public string? user_id { get; set; }
+        public DateTime start_date { get; set; }
+        public DateTime end_date { get; set; }
+    }
+
+    [HttpPost("{id}/book")]
+    public async Task<IActionResult> AddBooking(int id, [FromBody] BookingRequest data)
+    {
+        if (await _context.Bookings.FirstOrDefaultAsync(x => x.UserId == data.user_id && x.ListingId == id) != null)
+            return StatusCode(400, "User already submitted booking");
+
+        Listing? listing = await _context.Listings.FindAsync(id);
+        if (listing == null)
+            return NotFound();
+
+        if (data.start_date < listing.StartDate.ToDateTime(TimeOnly.MinValue)) return StatusCode(400, "Input start date is before listing start date");
+        if (data.end_date > listing.EndDate.ToDateTime(TimeOnly.MinValue))     return StatusCode(400, "Input end date is after listing end date");
+        if (data.start_date > data.end_date)                                   return StatusCode(400, "Start date is after end date");
+
+        _context.Bookings.Add(new Booking { 
+            ListingId = id,
+            UserId = data.user_id,
+            StartDate = DateOnly.FromDateTime(data.start_date),
+            EndDate = DateOnly.FromDateTime(data.end_date),
+        });
+        await _context.SaveChangesAsync();
+
+        return Ok();
     }
 
     private List<Image> GetListingImages(int listing_id)
