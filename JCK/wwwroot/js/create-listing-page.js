@@ -1,5 +1,5 @@
 import { get_location } from './location.js'
-import { shake_element, BASE_URL } from './common.js'
+import { shake_element } from './common.js'
 import { getUserId } from './auth.js'
 
 const location_text = document.getElementById("location-text");   
@@ -172,12 +172,12 @@ create_button.addEventListener("click", async () => {
     })
     .then(data => {
         console.log("Listing created:", data);
-        window.location.href = BASE_URL + "/";
+        window.location.href = "/";
     })
     .catch(err => {
         console.error("FULL ERROR:", err);
         alert(err.message);
-        window.location.href = BASE_URL + "/";
+        window.location.href = "/";
     });
 })
 

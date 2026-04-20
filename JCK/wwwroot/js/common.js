@@ -40,5 +40,3 @@ export function format_date_range(date_start, date_end, capitalize = false)
     return date_start.toLocaleDateString(undefined, start_format) + " - " + date_end.toLocaleDateString(undefined, end_format);
 }
 
-export const BASE_URL = window.location.pathname.startsWith("/project-management-2026") ? "/project-management-2026" : "";
-
