@@ -7,6 +7,7 @@ namespace JCK.DTO
 {
     public class CreateListingDTO
     {
+        public string UserId { get; set; } = string.Empty;
         public string CarName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }

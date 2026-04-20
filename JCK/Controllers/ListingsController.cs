@@ -58,6 +58,7 @@ public class ListingController : ControllerBase // inherits from controller base
     {
         var listing = new Listing
         {
+            UserId = dto.UserId,
             CarName = dto.CarName,
             Description = dto.Description,
             Price = dto.Price,
@@ -112,9 +113,8 @@ public class ListingController : ControllerBase // inherits from controller base
 
         return Ok(new
         {
+            userId = listing.UserId,
             carName = listing.CarName,
-            ownerName = "Owner",
-            ownerImage = "/images/user.jpg",
             description = listing.Description,
             pricePerDay = listing.Price,
             availableStartDate = listing.StartDate,

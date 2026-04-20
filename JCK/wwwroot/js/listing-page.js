@@ -1,63 +1,64 @@
 import { shake_element, format_date_range, format_date } from './common.js'
-import { getUserId } from './auth.js'
-
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-
-let listing;
-let reviewData;
-
-try 
-{
-    const response = await fetch(`/api/Listing/${id}`);
-    if (!response.ok)
-    throw new Error("Listing not found");
-
-    listing = await response.json();
-
-    const reviewsResponse = await fetch(`/api/Reviews?listingId=${id}`);
-
-    if (!reviewsResponse.ok)
-    throw new Error("Could not load reviews");
-
-    reviewData = await reviewsResponse.json();
-} 
-catch (error) 
-{
-    console.error("Error fetching listing:", error);
-    alert("Error fetching listing data.");
-    document.body.style.visibility = "visible";
-}
-
-const car_name = listing.carName;
-const owner_name = listing.ownerName;
-const owner_image = listing.ownerImage;
-const description = listing.description;
-
-const average_rating = reviewData.averageRating;
-const eligible_for_review = true; // todo this boolean is what shows the review posting box. it should be set here based on if the user booked this car before
-
-const price_per_day = listing.pricePerDay;
-const available_start_date = new Date(listing.availableStartDate);
-const available_end_date = new Date(listing.availableEndDate);
-
-//const reviews = [
-    //{rating: 3, date: new Date(2025, 11, 10), name: "reviewer", profile_image:"../images/car4.webp", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-   // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
-   // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "amazing car"},
-   // {rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "llongwordlongwordlongwordlongwordlongwordlongwordlongwordongword"},
-   // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
-    //{rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-    //{rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
-   // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "i would never create an alt account to boost my rating"},
-//];
-
-// ^ Saving current data in case of a error
-
-const reviews = reviewData.reviews;
-const images = listing.images ?? []; //Added to avoid crash if we have no image
+import { getUser, getUserId } from './auth.js'
 
 try {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    let listing;
+    let reviewData;
+
+    try 
+    {
+        const response = await fetch(`/api/Listing/${id}`);
+        if (!response.ok)
+        throw new Error("Listing not found");
+
+        listing = await response.json();
+
+        const reviewsResponse = await fetch(`/api/Reviews?listingId=${id}`);
+
+        if (!reviewsResponse.ok)
+        throw new Error("Could not load reviews");
+
+        reviewData = await reviewsResponse.json();
+    } 
+    catch (error) 
+    {
+        console.error("Error fetching listing:", error);
+        alert("Error fetching listing data.");
+        document.body.style.visibility = "visible";
+    }
+
+    const user = await getUser(listing.userId);
+    const car_name = listing.carName;
+    const owner_name = user.username;
+    const owner_image = user.imageUrl ? user.imageUrl : "/images/user.jpg";
+    const description = listing.description;
+
+    const average_rating = reviewData.averageRating;
+    const eligible_for_review = true; // todo this boolean is what shows the review posting box. it should be set here based on if the user booked this car before
+
+    const price_per_day = listing.pricePerDay;
+    const available_start_date = new Date(listing.availableStartDate);
+    const available_end_date = new Date(listing.availableEndDate);
+
+    //const reviews = [
+        //{rating: 3, date: new Date(2025, 11, 10), name: "reviewer", profile_image:"../images/car4.webp", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
+       // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
+       // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "amazing car"},
+       // {rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "llongwordlongwordlongwordlongwordlongwordlongwordlongwordongword"},
+       // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
+        //{rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
+        //{rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
+       // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "i would never create an alt account to boost my rating"},
+    //];
+
+    // ^ Saving current data in case of a error
+
+    const reviews = reviewData.reviews;
+    const images = listing.images ?? []; //Added to avoid crash if we have no image
+
     document.title = car_name + " | JCK";
 
     const image_list_container = document.getElementById("image-list-container");

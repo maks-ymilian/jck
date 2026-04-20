@@ -1,5 +1,6 @@
 import { get_location } from './location.js'
 import { shake_element, BASE_URL } from './common.js'
+import { getUserId } from './auth.js'
 
 const location_text = document.getElementById("location-text");   
 const create_button = document.getElementById("create-button");   
@@ -138,10 +139,15 @@ create_button.addEventListener("click", async () => {
         throw new Error("Upload failed");
     }
 
+    const user_id = getUserId();
+    if (!user_id)
+        throw new Error("Not signed in");
+
     const listing = {
+        userId: user_id,
         carName: title.value,
         description: description.value,
-        pricePerDay: parseFloat(price.value),
+        price: parseFloat(price.value),
         year: parseInt(year.value),
         startDate: dates.start,
         endDate: dates.end,

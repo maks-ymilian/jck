@@ -9,6 +9,22 @@ const publishableKey = "pk_test_Z3Jvd24td29tYmF0LTkxLmNsZXJrLmFjY291bnRzLmRldiQ"
 const clerk = new Clerk(publishableKey);
 await clerk.load();
 
+async function getToken() {
+    return await clerk.session?.getToken();
+}
+
+export async function getUser(user_id) {
+    try {
+        const response = await fetch(`/api/users/${user_id}`, { method: "GET" });
+        if (!response.ok)
+            throw new Error(response);
+        return (await response.json()).user;
+    }
+    catch (error) {
+        throw error;
+    }
+}
+
 export function isSignedIn() {
     return clerk.isSignedIn;
 }
