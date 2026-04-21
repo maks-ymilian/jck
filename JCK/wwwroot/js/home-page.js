@@ -95,7 +95,7 @@ function createCard(item, images, average_rating) {
                 <div class="card-info">
                     <div class="card-row">
                         <span class="card-title">${item.carName}</span>
-                        ${average_rating === -1 ? "" : `
+                        ${average_rating == null || average_rating === -1 ? "" : `
                             <span class="card-rating" style="font: inherit; font-size: 14px; margin-right: 5px">
                                 <svg width="14" height="14" viewBox="0 0 12 12" fill="#222"><path d="M6 1l1.4 2.8 3.1.4-2.25 2.2.53 3.1L6 8l-2.78 1.5.53-3.1L1.5 4.2l3.1-.4z"/></svg>
                                 ${average_rating.toFixed(2)}
@@ -129,7 +129,9 @@ async function loadListings() {
             const response = await fetch(`/api/Listing/${item.id}`);
             const data = await response.json();
             const images = data.images ?? [];
-            const average_rating = data.average_rating ?? -1;
+            const average_rating = (data.average_rating !== undefined && data.average_rating !== null)
+            ? data.average_rating
+             : -1
             searchContainer.insertAdjacentHTML("beforeend", createCard(item, images, average_rating));
         }
 
@@ -141,7 +143,9 @@ async function loadListings() {
             const response = await fetch(`/api/Listing/${item.id}`);
             const data = await response.json();
             const images = data.images ?? [];
-            const average_rating = data.average_rating ?? -1;
+            const average_rating = (data.average_rating !== undefined && data.average_rating !== null)
+            ? data.average_rating
+             : -1
             const loc = item.carLocation?.trim().toLowerCase();
 
             if (loc?.includes(userLocation)) {
