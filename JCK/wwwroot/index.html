@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>JCK</title>
     <link rel="stylesheet" href="css/style.css?v=12">
+    <link rel="stylesheet" href="css/supportsection.css">
 </head>
 
 <body>
@@ -30,19 +31,40 @@
     <div id="default-sections">
         <div class="main-container">
             <h1 id="title">Cars</h1>
+            <p class="section-subtitle">Available rentals based on your location</p>
             <div id="listing-container"></div>
         </div>
 
         <div class="main-container">
             <h1>Salthill</h1>
+            <p class="section-subtitle">Popular rentals by the coast</p>
             <div id="salthill-container" class="listing-grid"></div>
         </div>
 
         <div class="main-container">
             <h1>Tuam</h1>
+            <p class="section-subtitle">Affordable and reliable options</p>
             <div id="tuam-container" class="listing-grid"></div>
         </div>
     </div>
+
+<footer class="site-footer">
+    <hr class="footer-divider">
+    <div class="footer-inner">
+        <span class="footer-copy">© 2025 JCK Rentals, Inc. · Made in Galway 🇮🇪</span>
+
+        <div class="footer-actions">
+            <a href="mailto:support@jck.com" class="footer-support">Support</a>
+            <a href="https://instagram.com/jckrentals" target="_blank" class="footer-instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</footer>
 
     <script type="module" src="/js/auth-setup.js"></script>
     <script type="module" src="/js/home-page.js"></script>
