@@ -1,6 +1,34 @@
 import { get_location } from './location.js'
 import { format_date_range } from './common.js'
 
+const listing_container = document.getElementById("listing-container");
+const tuam_container = document.getElementById("tuam-container");
+const salthill_container = document.getElementById("salthill-container");
+const title = document.getElementById("title");
+
+const cardStates = {};
+const likedSet = new Set();
+
+const groups = {
+    salthill: [],
+    tuam: []
+};
+
+let userLocation = "";
+
+get_location(async (loc) => {
+    userLocation = loc.trim().toLowerCase();
+    title.innerHTML = "Cars Near " + loc;
+    await loadListings();
+});
+
+function render(container, data) {
+    container.innerHTML = "";
+    for (const { item, images } of data) {
+        container.insertAdjacentHTML("beforeend", createCard(item, images));
+    }
+}
+
 async function fetchListings(query) {
     try {
         let response;
@@ -15,12 +43,6 @@ async function fetchListings(query) {
         console.error('Error fetching listings:', err);
     }
 }
-
-const listing_container = document.getElementById("listing-container");
-const title = document.getElementById("title");
-
-const cardStates = {};
-const likedSet = new Set();
 
 window.slideCard = function(id, dir, e) {
     e.stopPropagation();
@@ -86,17 +108,51 @@ function createCard(item, images) {
     `;
 }
 
-const params = new URLSearchParams(window.location.search);
-const listings = await fetchListings(params.get("search"));
+async function loadListings() {
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get("search");
+    const listings = await fetchListings(query);
 
-listings.forEach(async item => {
-    const response = await fetch(`/api/Listing/${item.id}`);
-    if (!response.ok) console.log(`couldn't get images: ${response.status}`);
-    const images = (await response.json()).images ?? [];
+    console.log("query:", query);
+    console.log("listings:", listings)
 
-    listing_container.insertAdjacentHTML("beforeend", createCard(item, images));
-});
+    const searchTitle = document.getElementById("search-title");
+    const searchContainer = document.getElementById("search-container");
+    const defaultSections = document.getElementById("default-sections");
 
-get_location((location) => {
-    title.innerHTML = "Cars in " + location;
-});
+    if (query) {
+            const searchSections = document.getElementById("search-sections"); // add this
+    searchSections.style.display = "block";  
+    
+        searchTitle.textContent = `Results for "${query}"`;
+        searchTitle.style.display = "block";
+        searchContainer.style.display = "grid";
+        defaultSections.style.display = "none";
+
+        for (const item of listings) {
+            const response = await fetch(`/api/Listing/${item.id}`);
+            const images = (await response.json()).images ?? [];
+            searchContainer.insertAdjacentHTML("beforeend", createCard(item, images));
+        }
+
+    } else {
+        defaultSections.style.display = "block";
+
+        for (const item of listings) {
+            const response = await fetch(`/api/Listing/${item.id}`);
+            const images = (await response.json()).images ?? [];
+            const loc = item.carLocation?.trim().toLowerCase();
+
+            if (loc?.includes(userLocation)) {
+                listing_container.insertAdjacentHTML("beforeend", createCard(item, images));
+            }
+
+            const enriched = { item, images };
+            if (loc?.includes("salthill")) groups.salthill.push(enriched);
+            if (loc?.includes("tuam")) groups.tuam.push(enriched);
+        }
+
+        render(salthill_container, groups.salthill);
+        render(tuam_container, groups.tuam);
+    }
+}
