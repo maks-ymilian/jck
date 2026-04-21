@@ -1,6 +1,7 @@
-import { isSignedIn, mountSignIn } from "./auth.js";
+import { jest } from '@jest/globals';
+import { isSignedIn, mountSignIn } from "../wwwroot/js/auth.js";
 
-jest.mock("./auth.js", () => ({
+jest.mock("../wwwroot/js/auth.js", () => ({
   isSignedIn: jest.fn(),
   mountSignIn: jest.fn()
 }));
