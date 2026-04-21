@@ -1,0 +1,66 @@
+.site-footer {
+    margin-top: 80px;
+    padding: 0 40px 36px;
+    background: white;
+}
+
+.footer-divider {
+    border: none;
+    border-top: 2px solid #111;
+    margin: 0 0 28px;
+}
+
+.footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-copy {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+    letter-spacing: -0.2px;
+}
+
+.footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-support {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+    text-decoration: none;
+    padding-bottom: 2px;
+    border-bottom: 2px solid #111;
+    transition: all 0.2s ease;
+    letter-spacing: -0.2px;
+}
+
+.footer-support:hover {
+    color: #e15849;
+    border-bottom-color: #e15849;
+}
+
+.footer-instagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #111;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    padding: 8px;
+    border-radius: 50%;
+    border: 2px solid #111;
+}
+
+.footer-instagram:hover {
+    background: #111;
+    color: white;
+    transform: translateY(-2px);
+}

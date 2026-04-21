@@ -450,3 +450,15 @@ input[type="date"] {
     margin: 24px 0 16px;
     letter-spacing: -0.3px;
 }
+
+.section-header h1 {
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.section-subtitle {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 12px;
+}
+
