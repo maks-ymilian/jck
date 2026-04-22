@@ -1,15 +1,25 @@
+import { getToken } from "./auth.js";
+
+
+
+
 const container = document.getElementById("booking-container");
 
 async function loadBookingHistory() {
     try {
-        const response = await fetch("/history", {
-            credentials: "include" // important if using auth cookies
+        const token = await getToken();
+
+         const response = await fetch("/history", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         });
 
         if (!response.ok) {
             container.innerHTML = "<p>You are not logged in.</p>";
             return;
         }
+
 
         const data = await response.json();
 
