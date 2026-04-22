@@ -9,7 +9,7 @@ sidebar_overlay.innerHTML = `
         <a href="/" style="font-size: 16px"><p>Home</p></a>
         <a href="/create-listing" style="font-size: 16px"><p>Create a listing</p></a>
         <a href="/booking-history" style="font-size: 16px"><p>Booking history</p></a>
-        <a href="/" style="font-size: 16px"><p>My listings</p></a>
+        <a href="/my-listings" style="font-size: 16px"><p>My listings</p></a>
     </div>
 `;
 const sidebar = document.getElementById("actual-sidebar");   

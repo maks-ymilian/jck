@@ -56,6 +56,14 @@ public class ListingController : ControllerBase // inherits from controller base
         }));
     }
 
+    [HttpGet("user")]
+    public async Task<IActionResult> GetUserListings([FromQuery] string userId)
+    {
+        var listings = await _context.Listings.Where(x => x.UserId == userId).ToListAsync();
+        return Ok(listings);
+    }
+
+
     //post for making a listing 
     [HttpPost]
     public async Task<IActionResult> CreateListing(CreateListingDTO dto)
