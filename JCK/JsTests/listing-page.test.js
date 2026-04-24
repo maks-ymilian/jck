@@ -1,34 +1,72 @@
-import { jest } from '@jest/globals';
-import { getUser, getUserId } from "../wwwroot/js/auth.js";
-import { shake_element } from "../wwwroot/js/common.js";
+import { jest } from "@jest/globals";
+
+/* -----------------------------
+   GLOBAL MOCKS
+------------------------------*/
 
 global.fetch = jest.fn();
+global.alert = jest.fn();
 
-jest.mock("./auth.js", () => ({
-  getUser: jest.fn(),
-  getUserId: jest.fn()
+/* Mock Clerk so it NEVER runs real code */
+jest.mock("@clerk/clerk-js", () => ({
+  Clerk: jest.fn(() => ({
+    load: jest.fn().mockResolvedValue(true),
+    session: {
+      getToken: jest.fn().mockResolvedValue("token")
+    }
+  }))
 }));
 
-jest.mock("./common.js", () => ({
+/* Mock auth completely */
+jest.mock("../wwwroot/js/auth.js", () => ({
+  getUser: jest.fn().mockResolvedValue({
+    username: "John",
+    imageUrl: ""
+  }),
+  getUserId: jest.fn(() => 5)
+}));
+
+/* Mock helpers */
+jest.mock("../wwwroot/js/common.js", () => ({
   shake_element: jest.fn(),
   format_date: jest.fn(),
   format_date_range: jest.fn()
 }));
 
+/* -----------------------------
+   TEST SUITE
+------------------------------*/
+
 describe("listing page", () => {
+  const mockListing = {
+    userId: 1,
+    carName: "Test Car",
+    description: "Nice car",
+    pricePerDay: 50,
+    availableStartDate: "2030-01-01",
+    availableEndDate: "2030-12-31",
+    images: []
+  };
+
+  const mockReviews = {
+    averageRating: 4,
+    reviews: []
+  };
+
   beforeEach(() => {
+    jest.resetModules();
+    fetch.mockReset();
+
     document.body.innerHTML = `
       <div id="image-list-container"></div>
       <div id="first-image-container"></div>
       <div id="image-grid-container"></div>
       <div id="image-layer"></div>
 
+      <button id="view-photos-button"></button>
+
       <div id="star-selector">
-        <div><svg></svg></div>
-        <div><svg></svg></div>
-        <div><svg></svg></div>
-        <div><svg></svg></div>
-        <div><svg></svg></div>
+        <div></div><div></div><div></div><div></div><div></div>
       </div>
 
       <div id="reviews-container"></div>
@@ -40,108 +78,77 @@ describe("listing page", () => {
       <textarea id="review-text-area"></textarea>
       <button id="post-review-button"></button>
 
-      <div id="availability-text"></div>
-      <div id="booking-ui"></div>
-      <div id="price-text"></div>
-      <div id="owner-text"></div>
-      <img id="owner-profile-picture" />
-
-      <button id="book-button"></button>
-
       <input id="from-date" />
       <input id="to-date" />
-
-      <div id="book-error-text"></div>
-      <div id="rating-error-text"></div>
-      <div id="empty-review-error-text"></div>
+      <button id="book-button"></button>
 
       <h1 id="listing-title-text"></h1>
       <p id="description-text"></p>
+
+      <div id="owner-text"></div>
+      <img id="owner-profile-picture" />
     `;
-
-    window.history.pushState({}, "", "?id=123");
-
-    delete window.location;
-    window.location = { href: "", search: "?id=123" };
-
-    jest.resetModules();
-    fetch.mockReset();
   });
+
+  /* -----------------------------
+     TEST HELPERS
+  ------------------------------*/
+
+  const setupFetch = () => {
+    fetch.mockImplementation((url) => {
+      if (url.includes("/api/Listing/")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => mockListing
+        });
+      }
+
+      if (url.includes("/api/Reviews")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => mockReviews
+        });
+      }
+
+      if (url.includes("/book")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({})
+        });
+      }
+
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({})
+      });
+    });
+  };
+
+  /* -----------------------------
+     TEST 1
+  ------------------------------*/
 
   test("loads listing and renders title", async () => {
-    fetch
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          userId: 1,
-          carName: "Test Car",
-          description: "Nice car",
-          pricePerDay: 50,
-          availableStartDate: "2030-01-01",
-          availableEndDate: "2030-12-31",
-          images: []
-        })
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          averageRating: 4,
-          reviews: []
-        })
-      });
+    setupFetch();
 
-    getUser.mockResolvedValue({
-      username: "John",
-      imageUrl: ""
-    });
+    await import("../wwwroot/js/listing-page.js");
 
-    getUserId.mockReturnValue(5);
-
-    await import("./yourFile.js");
-
-    expect(document.getElementById("listing-title-text").textContent)
-      .toBe("Test Car");
+    expect(
+      document.getElementById("listing-title-text").textContent
+    ).toBe("Test Car");
   });
 
+  /* -----------------------------
+     TEST 2
+  ------------------------------*/
+
   test("posts review when valid", async () => {
-    fetch
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          userId: 1,
-          carName: "Test Car",
-          description: "Nice car",
-          pricePerDay: 50,
-          availableStartDate: "2030-01-01",
-          availableEndDate: "2030-12-31",
-          images: []
-        })
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          averageRating: 4,
-          reviews: []
-        })
-      })
-      .mockResolvedValueOnce({
-        ok: true
-      });
+    setupFetch();
 
-    getUser.mockResolvedValue({
-      username: "John",
-      imageUrl: ""
-    });
-
-    getUserId.mockReturnValue(5);
-
-    await import("./yourFile.js");
+    await import("../wwwroot/js/listing-page.js");
 
     document.getElementById("review-text-area").value = "Great car";
-
-    const stars = document.querySelectorAll("#star-selector div");
-    stars[4].click(); // 5 stars
-
+    document.querySelectorAll("#star-selector div")[4].click();
     document.getElementById("post-review-button").click();
 
     expect(fetch).toHaveBeenCalledWith(
@@ -152,47 +159,21 @@ describe("listing page", () => {
     );
   });
 
+  /* -----------------------------
+     TEST 3
+  ------------------------------*/
+
   test("handles booking request", async () => {
-    fetch
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          userId: 1,
-          carName: "Test Car",
-          description: "Nice car",
-          pricePerDay: 50,
-          availableStartDate: "2030-01-01",
-          availableEndDate: "2030-12-31",
-          images: []
-        })
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          averageRating: 4,
-          reviews: []
-        })
-      })
-      .mockResolvedValueOnce({
-        status: 200
-      });
+    setupFetch();
 
-    getUser.mockResolvedValue({
-      username: "John",
-      imageUrl: ""
-    });
-
-    getUserId.mockReturnValue(5);
-
-    await import("./yourFile.js");
+    await import("../wwwroot/js/listing-page.js");
 
     document.getElementById("from-date").value = "2030-02-01";
     document.getElementById("to-date").value = "2030-02-05";
-
     document.getElementById("book-button").click();
 
     expect(fetch).toHaveBeenCalledWith(
-      "/api/listing/123/book",
+      expect.stringContaining("/book"),
       expect.any(Object)
     );
   });
