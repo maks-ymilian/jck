@@ -1,5 +1,5 @@
 # JCK
-JCK is a car rental website hosted at https://jck-adyu.onrender.com/
+JCK is a car rental website
 
 ![JCK home page](home-page.png)
 
@@ -19,6 +19,6 @@ It uses
 - Supabase for Postgres database hosting
 - Stripe for payments
 - AWS S3 for image storage
-- Render for hosting the frontend/backend at https://jck-adyu.onrender.com/
+- Render for hosting the frontend/backend
 - GitHub Actions for auto-deploying to Render on every push
 - Jest for frontend testing and xUnit for backend testing
